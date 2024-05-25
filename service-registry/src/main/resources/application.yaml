@@ -1,0 +1,15 @@
+application:
+  title: Service Registry
+
+server:
+  port: 8761
+
+spring:
+  application:
+    name: SERVICE-REGISTRY
+
+#properties required to disable client registration becoz by default the netflix eureka server is also a client
+eureka:
+  client:
+  register-with-eureka: false
+  fetch-registry: false
