@@ -25,6 +25,8 @@ server:
 spring:
   application:
     name: API-GATEWAY
+  zipkin:
+    base-url: http://127.0.0.1:9411/
   cloud:
     gateway:
       discover:
@@ -50,6 +52,9 @@ management:
     web:
       exposure:
         includes: "*"
+  tracing: # number of requests zipkin or micrometer can send to sleuth to visualize the trace
+    sampling:
+      probability: 1.0
 
 
 # OpenAPI Configurations

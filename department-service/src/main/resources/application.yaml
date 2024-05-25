@@ -11,6 +11,14 @@ spring:
     username: guest
     password: guest
 
+  zipkin:
+    base-url: http://127.0.0.1:9411/
+
+management: # number of requests zipkin or micrometer can send to sleuth to visualize the trace
+  tracing:
+    sampling:
+      probability: 1.0
+
 #application:
 #  title: Department Service
 #  version: v1.0
