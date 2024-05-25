@@ -1,0 +1,82 @@
+application:
+  title: API Gateway
+  version: v1.0
+
+logging:
+  level:
+    ROOT: INFO
+
+# Server Configuration
+server:
+  port: 9191
+#  ssl:
+#    key-store: /etc/letsencrypt/live/department.xxxx.xxx.azure.com/keystore.p12
+#    key-store-type: PKCS12
+#    key-store-password: test
+#    key-alias: test
+
+# Spring Configurations
+spring:
+  application:
+    name: API-GATEWAY
+# Routes for employee service
+  cloud:
+    gateway:
+      routes:
+        - id: EMPLOYEE-SERVICE
+          uri: lb://EMPLOYEE-SERVICE
+          predicates:
+            - Path=/employee/**
+        - id: DEPARTMENT-SERVICE
+          uri: lb://DEPARTMENT-SERVICE
+          predicates:
+            - Path=/department/**
+
+management:
+  endpoints:
+    web:
+      exposure:
+        includes: *
+
+
+# OpenAPI Configurations
+openapi:
+  title: API Gateway
+  version: v1.0
+  description: API Gateway Service
+  termsOfService:
+  contact:
+    email:
+    name:
+    url:
+  license:
+    name:
+    url:
+
+# Default Open API endpoint Specifications
+# api docs endpoint path
+springdoc:
+  api-docs.path: /v3/api-docs
+  # customise endpoint for Swagger UI
+  swagger-ui:
+    path: /swagger-ui
+    # disable default Swagger
+    disable-swagger-default-url: true
+    # disable schemas/models in swagger ui
+    defaultModelsExpandDepth=-1:
+
+#web-config-origin-url
+web:
+  config:
+    allowed-origin-urls: http://localhost:3000,
+      http://localhost:3001,
+      http://localhost:3002,
+    max-age: 3600
+
+#properties required to disable client registration becoz by default the netflix eureka server is also a client
+eureka:
+  instance:
+    client:
+      server:
+        url:
+          default-zone: http://localhost:8761/eureka/
