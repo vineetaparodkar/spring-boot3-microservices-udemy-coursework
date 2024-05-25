@@ -11,5 +11,5 @@ spring:
 #properties required to disable client registration becoz by default the netflix eureka server is also a client
 eureka:
   client:
-  register-with-eureka: false
-  fetch-registry: false
+    register-with-eureka: false
+    fetch-registry: false
