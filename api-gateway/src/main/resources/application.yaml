@@ -5,6 +5,12 @@ application:
 logging:
   level:
     ROOT: INFO
+    org:
+      springframework:
+        cloud:
+          gateway:
+            handler:
+              RoutePredicateHandlerMapping: DEBUG
 
 # Server Configuration
 server:
@@ -19,24 +25,31 @@ server:
 spring:
   application:
     name: API-GATEWAY
-# Routes for employee service
   cloud:
     gateway:
-      routes:
-        - id: EMPLOYEE-SERVICE
-          uri: lb://EMPLOYEE-SERVICE
-          predicates:
-            - Path=/employee/**
-        - id: DEPARTMENT-SERVICE
-          uri: lb://DEPARTMENT-SERVICE
-          predicates:
-            - Path=/department/**
+      discover:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+## Routes for employee service
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: EMPLOYEE-SERVICE
+#          uri: lb://EMPLOYEE-SERVICE
+#          predicates:
+#            - Path=/employee/**
+#        - id: DEPARTMENT-SERVICE
+#          uri: lb://DEPARTMENT-SERVICE
+#          predicates:
+#            - Path=/department/**
 
 management:
   endpoints:
     web:
       exposure:
-        includes: *
+        includes: "*"
 
 
 # OpenAPI Configurations
