@@ -1,0 +1,79 @@
+application:
+  title: Config Server
+  version: v1.0
+
+logging:
+  level:
+    ROOT: INFO
+
+# Server Configuration
+server:
+  port: 8888
+#  ssl:
+#    key-store: /etc/letsencrypt/live/department.xxxx.xxx.azure.com/keystore.p12
+#    key-store-type: PKCS12
+#    key-store-password: test
+#    key-alias: test
+
+# Spring Configurations
+spring:
+  application:
+    name: CONFIG-SERVER
+
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/vineetaparodkar/config-server
+          clone-on-start: true
+          default-label: main
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        includes: "*"
+
+
+# OpenAPI Configurations
+openapi:
+  title: Config Server
+  version: v1.0
+  description: Config Server Service
+  termsOfService:
+  contact:
+    email:
+    name:
+    url:
+  license:
+    name:
+    url:
+
+# Default Open API endpoint Specifications
+# api docs endpoint path
+springdoc:
+  api-docs.path: /v3/api-docs
+  # customise endpoint for Swagger UI
+  swagger-ui:
+    path: /swagger-ui
+    # disable default Swagger
+    disable-swagger-default-url: true
+    # disable schemas/models in swagger ui
+    defaultModelsExpandDepth=-1:
+
+#web-config-origin-url
+web:
+  config:
+    allowed-origin-urls: http://localhost:3000,
+      http://localhost:3001,
+      http://localhost:3002,
+    max-age: 3600
+
+#properties required to disable client registration becoz by default the netflix eureka server is also a client
+eureka:
+  instance:
+    client:
+      server:
+        url:
+          default-zone: http://localhost:8761/eureka/
