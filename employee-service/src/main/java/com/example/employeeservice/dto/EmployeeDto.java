@@ -14,7 +14,7 @@ import lombok.*;
 public class EmployeeDto {
 
     @JsonProperty("id")
-    private int id;
+    private Long id;
 
     @JsonProperty("departmentCode")
     private int departmentCode;

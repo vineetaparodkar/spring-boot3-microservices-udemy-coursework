@@ -1,10 +1,8 @@
 package com.example.employeeservice.services.impl;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.example.employeeservice.mapper.AutoEmployeeMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.example.employeeservice.dto.DepartmentDto;
 import com.example.employeeservice.dto.EmployeeDetailsDto;
 import com.example.employeeservice.dto.EmployeeDto;
@@ -15,6 +13,7 @@ import com.example.employeeservice.services.ApiClient;
 import com.example.employeeservice.services.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final ApiClient apiClient;
 
+    private final ModelMapper modelMapper;
+
     @Override
     public EmployeeDto saveEmployee(EmployeeDto employeeDto) throws JsonProcessingException {
         Employees employee = new Employees();
@@ -45,17 +46,15 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setFirstName(employeeDto.getFirstName());
         employee.setLastName(employeeDto.getLastName());
         employee.setDepartmentCode(employeeDto.getDepartmentCode());
-        employeeRepository.save(employee);
+        Employees savedEmployee = employeeRepository.save(employee);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        //using model mapper library
+        //EmployeeDto savedEmployeeDto = modelMapper.map(savedEmployee, EmployeeDto.class);
 
-        JSONObject jsonResponse = new JSONObject(employee);
-        EmployeeDto response = objectMapper.readValue(jsonResponse.toString(), EmployeeDto.class);
+        //using mapstruct mapper library
+        EmployeeDto savedEmployeeDto = AutoEmployeeMapper.MAPPER.mapToUserDto(savedEmployee);
 
-        return response;
+        return savedEmployeeDto;
     }
 
     @Override
@@ -63,11 +62,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         Optional<Employees> employeesOptional = employeeRepository.findById(employeeId);
 
         if (employeesOptional.isPresent()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE);
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
             Employees employee = employeesOptional.get();
 
             //using rest template
@@ -76,12 +70,8 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .getForEntity(
                             "http://localhost:8080/department/" + employee.getDepartmentCode(),
                             DepartmentDto.class);
-            JSONObject jsonResponse = new JSONObject(employee);
-            EmployeeDto employeeDto = objectMapper.readValue(jsonResponse.toString(), EmployeeDto.class);
+            EmployeeDetailsDto employeeDetailsDto = modelMapper.map(departmentServiceResponse, EmployeeDetailsDto.class);
 
-            EmployeeDetailsDto employeeDetailsDto = new EmployeeDetailsDto(
-                    employeeDto,departmentServiceResponse.getBody()
-            );
             return employeeDetailsDto;
         } else {
             throw new EmployeeException("Employee Not found");
@@ -89,14 +79,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDetailsDto getEmployeeDetailsUsingWebClient(int employeeId) throws JsonProcessingException, EmployeeException {
+    public EmployeeDetailsDto getEmployeeDetailsUsingWebClient(int employeeId) throws EmployeeException {
         Optional<Employees> employeesOptional = employeeRepository.findById(employeeId);
 
         if (employeesOptional.isPresent()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE);
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             Employees employee = employeesOptional.get();
 
@@ -108,12 +94,10 @@ public class EmployeeServiceImpl implements EmployeeService {
                     .retrieve()
                     .bodyToMono(DepartmentDto.class)
                     .block();
-            JSONObject jsonResponse = new JSONObject(employee);
-            EmployeeDto employeeDto = objectMapper.readValue(jsonResponse.toString(), EmployeeDto.class);
 
-            EmployeeDetailsDto employeeDetailsDto = new EmployeeDetailsDto(
-                    employeeDto,departmentServiceResponse
-            );
+            //using model mapper library
+            EmployeeDetailsDto employeeDetailsDto = modelMapper.map(departmentServiceResponse, EmployeeDetailsDto.class);
+
             return employeeDetailsDto;
         } else {
             throw new EmployeeException("Employee Not found");
@@ -126,9 +110,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         if (employeesOptional.isPresent()) {
             ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE);
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
             Employees employee = employeesOptional.get();
 
@@ -138,9 +119,9 @@ public class EmployeeServiceImpl implements EmployeeService {
             JSONObject jsonResponse = new JSONObject(employee);
             EmployeeDto employeeDto = objectMapper.readValue(jsonResponse.toString(), EmployeeDto.class);
 
-            EmployeeDetailsDto employeeDetailsDto = new EmployeeDetailsDto(
-                    employeeDto,departmentServiceResponse
-            );
+            //using model mapper library
+            EmployeeDetailsDto employeeDetailsDto = modelMapper.map(departmentServiceResponse, EmployeeDetailsDto.class);
+
             return employeeDetailsDto;
         } else {
             throw new EmployeeException("Employee Not found");
