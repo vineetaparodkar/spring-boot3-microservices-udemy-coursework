@@ -1,6 +1,12 @@
 spring:
   application:
     name: EMPLOYEE-SERVICE
+    
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
 
   config:
     import: optional:configserver:http://localhost:8888
