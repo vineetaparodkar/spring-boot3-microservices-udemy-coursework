@@ -13,13 +13,13 @@ public class OrganizationController {
 
     private OrganizationService organizationService;
 
-    @PostMapping("/api/organizations")
+    @PostMapping("/")
     public ResponseEntity<OrganizationDto> saveOrganization(@RequestBody OrganizationDto organizationDto){
         OrganizationDto savedOrganization = organizationService.saveOrganization(organizationDto);
         return new ResponseEntity<>(savedOrganization, HttpStatus.CREATED);
     }
 
-    @GetMapping("/api/organizations/{code}")
+    @GetMapping("/{code}")
     public ResponseEntity<OrganizationDto> getOrganization(@PathVariable("code") String organizationCode){
         OrganizationDto organizationDto = organizationService.getOrganizationByCode(organizationCode);
         return ResponseEntity.ok(organizationDto);

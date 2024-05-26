@@ -31,4 +31,7 @@ public class Employees {
 
     @Column(name = "departmentCode")
     private int departmentCode;
+
+    @Column(name = "organizationCode")
+    private int organizationCode;
 }

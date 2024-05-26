@@ -1,5 +1,6 @@
 package com.example.employeeservice.services.impl;
 
+import com.example.employeeservice.dto.OrganizationDto;
 import com.example.employeeservice.mapper.AutoEmployeeMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -102,6 +103,12 @@ public class EmployeeServiceImpl implements EmployeeService {
             //using model mapper library
             EmployeeDetailsDto employeeDetailsDto = modelMapper.map(departmentServiceResponse, EmployeeDetailsDto.class);
 
+            OrganizationDto organizationDto = webClient.get()
+                    .uri("http://localhost:8083/organization/" + employee.getOrganizationCode())
+                    .retrieve()
+                    .bodyToMono(OrganizationDto.class)
+                    .block();
+            employeeDetailsDto.setOrganizationDto(organizationDto);
             return employeeDetailsDto;
         } else {
             throw new EmployeeException("Employee Not found");

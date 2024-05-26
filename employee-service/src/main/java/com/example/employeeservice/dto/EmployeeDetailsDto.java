@@ -14,4 +14,6 @@ public class EmployeeDetailsDto {
     private EmployeeDto employeeDto;
 
     private DepartmentDto departmentDto;
+
+    private OrganizationDto organizationDto;
 }
