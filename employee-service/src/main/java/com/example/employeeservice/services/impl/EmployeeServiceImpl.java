@@ -11,6 +11,8 @@ import com.example.employeeservice.exception.EmployeeException;
 import com.example.employeeservice.repository.EmployeeRepository;
 import com.example.employeeservice.services.ApiClient;
 import com.example.employeeservice.services.EmployeeService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
@@ -79,6 +81,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
+    //@CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     public EmployeeDetailsDto getEmployeeDetailsUsingWebClient(int employeeId) throws EmployeeException {
         Optional<Employees> employeesOptional = employeeRepository.findById(employeeId);
 
@@ -102,6 +106,29 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             throw new EmployeeException("Employee Not found");
         }
+    }
+
+    public EmployeeDetailsDto getDefaultDepartment(Long employeeId, Exception exception) {
+
+        Employees employee = employeeRepository.findById(employeeId).get();
+
+        DepartmentDto departmentDto = new DepartmentDto();
+        departmentDto.setName("R&D Department");
+        departmentDto.setCode(2);
+        departmentDto.setDescription("Research and Development Department");
+
+        EmployeeDto employeeDto = new EmployeeDto(
+                employee.getId(),
+                employee.getDepartmentCode(),
+                employee.getFirstName(),
+                employee.getLastName(),
+                employee.getEmail()
+        );
+
+        EmployeeDetailsDto apiResponseDto = new EmployeeDetailsDto();
+        apiResponseDto.setEmployeeDto(employeeDto);
+        apiResponseDto.setDepartmentDto(departmentDto);
+        return apiResponseDto;
     }
 
     @Override

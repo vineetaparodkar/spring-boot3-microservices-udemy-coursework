@@ -1,6 +1,6 @@
 spring:
   application:
-    name: EMPLOYEE-SERVICE
+    name: ORGANIZATION-SERVICE
 
   rabbitmq:
     host: localhost
@@ -32,13 +32,13 @@ management: # number of requests zipkin or micrometer can send to sleuth to visu
 resilience4j:
   retry: # Retry configuration
     instances:
-      EMPLOYEE-SERVICE:
+      ORGANIZATION-SERVICE:
         registerHealthIndicator: true
         maxRetryAttempts: 5
         waitDuration: 2s
   circuitbreaker:  # circuitbreaker configuration
     instance:
-      EMPLOYEE-SERVICE:
+      ORGANIZATION-SERVICE:
         registerHealthIndicator: true
         failureRateThreshold: 50
         minimumNumberOfCalls: 5
@@ -49,9 +49,9 @@ resilience4j:
         slidingWindowType: COUNT_BASED
 
 #application:
-#  title: Employee Service
+#  title: ORGANIZATION Service
 #  version: v1.0
-#  project-dir: /employee
+#  project-dir: /organization
 #
 #logging:
 #  level:
@@ -59,9 +59,9 @@ resilience4j:
 #
 ## Server Configuration
 #server:
-#  port: 8085
+#  port: 8083
 #  servlet:
-#    context-path: /employee
+#    context-path: /organization
 ##  ssl:
 ##    key-store: /etc/letsencrypt/live/employee.xxx.xxx.azure.com/keystore.p12
 ##    key-store-type: PKCS12
@@ -71,13 +71,13 @@ resilience4j:
 ## Spring Configurations
 #spring:
 #  application:
-#    name: EMPLOYEE-SERVICE
+#    name: ORGANIZATION-SERVICE
 #
 ## OpenAPI Configurations
 #openapi:
-#  title: Employee Service
+#  title: Organization Service
 #  version: v1.0
-#  description: Employee REST API Service
+#  description: Organization REST API Service
 #  termsOfService:
 #  contact:
 #    email:
